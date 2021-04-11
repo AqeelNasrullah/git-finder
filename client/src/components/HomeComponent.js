@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { FaHeart, FaLock } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Button, Form, Input } from 'reactstrap';
@@ -8,6 +8,7 @@ import { PUBLIC_URL } from '../conf/conf';
 const Home = () => {
     const [submitting, setSubmitting] = useState(false);
     const [searchInput, setSearchInput] = useState('');
+    const history = useHistory();
 
     const handleInput = e => {
         const val = e.target.value;
@@ -17,7 +18,10 @@ const Home = () => {
     const handleSearchForm = e => {
         e.preventDefault();
         if (searchInput) {
-            alert(searchInput);
+            setSubmitting(true);
+            history.push(`/search/${ searchInput }`);
+        } else {
+            setSubmitting(false);
         }
     }
 
