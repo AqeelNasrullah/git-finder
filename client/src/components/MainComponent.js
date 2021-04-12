@@ -2,13 +2,17 @@ import React from 'react'
 import { Route, Switch } from 'react-router'
 import { Link } from 'react-router-dom'
 import Home from './HomeComponent'
+import Repo from './RepoComponent'
 import Search from './SearchComponent'
+import User from './UserComponent'
 
 const Main = () => {
     return (
         <Switch>
             <Route exact path="/" component={ Home } />
             <Route path="/search/:search" component={ Search } />
+            <Route exact path="/user/:userParam" component={ User } />
+            <Route path="/user/:userParam/repo/:repoParam" component={ Repo } />
 
             {/* 404 */}
             <Route component={ () => {
