@@ -74,13 +74,34 @@ export const getContributors = (user, repo) => dispatch => {
         .then(result => {
             dispatch({
                 type: ActionTypes.CONTRIBUTORS_LOADED,
-                paylaod: result.data
+                payload: result.data
             })
         })
         .catch(err => {
             dispatch({
                 type: ActionTypes.CONTRIBUTORS_ERROR,
-                paylaod: err.message
+                payload: err.message
+            })
+        })
+}
+
+export const getLanguages = (user, repo) => dispatch => {
+    dispatch({
+        type: ActionTypes.LANGUAGES_LOADING,
+        payload: null
+    });
+
+    axios.get(`https://api.github.com/repos/${user}/${repo}/languages`)
+        .then(result => {
+            dispatch({
+                type: ActionTypes.LANGUAGES_LOADED,
+                payload: result.data
+            });
+        })
+        .catch(err => {
+            dispatch({
+                type: ActionTypes.LANGUAGES_ERROR,
+                payload: err.message
             })
         })
 }

@@ -1,13 +1,13 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { AiFillEye, AiFillStar } from 'react-icons/ai'
-import { BiGitRepoForked } from 'react-icons/bi'
+import { BiCodeAlt, BiGitRepoForked } from 'react-icons/bi'
 import { BsFillExclamationCircleFill } from 'react-icons/bs'
 import { FaHeart, FaLock } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { PUBLIC_URL } from '../conf/conf'
-import { getContributors, getSingleRepo } from '../store/actions/reposActions'
+import { getContributors, getLanguages, getSingleRepo } from '../store/actions/reposActions'
 import { getCommits } from "../store/actions/reposActions";
 import { Button, Input, InputGroup, InputGroupAddon, ListGroup, ListGroupItem } from 'reactstrap'
 import LazyLoad from 'react-lazyload'
@@ -25,12 +25,26 @@ const Repo = (props) => {
     const repo = useSelector(state => state.repo);
     const commits = useSelector(state => state.commits);
     const contributors = useSelector(state => state.contributors);
+    const languages = useSelector(state => state.languages);
+
+    let ttl = 0;
+    let lang_render = '';
 
     useEffect(() => {
         dispatch(getSingleRepo(userParam, repoParam));
         dispatch(getCommits(userParam, repoParam));
         dispatch(getContributors(userParam, repoParam));
+        dispatch(getLanguages(userParam, repoParam));
     }, [dispatch, userParam, repoParam])
+
+    for (const i in languages.result) {
+        ttl += languages.result[i];
+    }
+
+    for (const key in languages.result) {
+        if (Number((languages.result[key] / ttl) * 100).toFixed(1) !== '0.0')
+        lang_render += `| ${ key } ${ Number((languages.result[key] / ttl) * 100).toFixed(1) }% |`;
+    }
 
     return (
         <div>
@@ -122,7 +136,7 @@ const Repo = (props) => {
                                         <h5 className="font-weight-bolder">Clone Repository</h5>
 
                                         <InputGroup>
-                                            <Input type="text" value={repo.result.clone_url} onChange={() => 0} />
+                                            <Input type="text" value={repo.result.clone_url} onChange={() => 0} disabled />
                                             <InputGroupAddon addonType="append">
                                                 <CopyToClipboard text={repo.result.clone_url} onCopy={() => setCopied(true)}><Button type="button" title="Copy to Clipboard"><HiOutlineClipboardCopy /></Button></CopyToClipboard>
                                             </InputGroupAddon>
@@ -144,9 +158,62 @@ const Repo = (props) => {
                                                 </div>
                                             </>
                                         ) : contributors.err ? (
-                                            <div></div>
+                                            <>
+                                                <hr />
+                                                <div>
+                                                    <h3 className="font-weight-bolder">Contributors</h3>
+                                                    <h1 className="text-center py-3">{ contributors.err }</h1>
+                                                </div>
+                                            </>
                                         ) : contributors.result && (
-                                            <div></div>
+                                            <>
+                                                <hr />
+                                                <div>
+                                                    <h3 className="font-weight-bolder">Contributors</h3>
+                                                    { contributors.result.slice(0,3).map(contributor => {
+                                                        return (
+                                                            <LazyLoad key={ contributor.id }>
+                                                                <div className="d-flex align-items-center mb-2">
+                                                                    <div style={{ width: '50px', height: '50px', overflow: 'hidden', borderRadius: '100%', marginRight: '15px' }}>
+                                                                        <img src={ contributor.avatar_url } alt="Avatar not found" width="100%" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <h6 className="font-weight-bolder mb-0">{ contributor.login }</h6>
+                                                                        <small>{ contributor.contributions } Contributions</small>
+                                                                    </div>
+                                                                </div>
+                                                            </LazyLoad>
+                                                        )
+                                                    }) }
+                                                </div>
+                                            </>
+                                        )
+                                    }
+                                    {
+                                        languages.loading ? (
+                                            <>
+                                                <hr />
+                                                <div>
+                                                    <h3 className="font-weight-bolder">Languages</h3>
+                                                    <h1 className="text-center py-3"><i className="spinner-grow"></i></h1>
+                                                </div>
+                                            </>
+                                        ) : languages.err ? (
+                                            <>
+                                                <hr />
+                                                <div>
+                                                    <h3 className="font-weight-bolder">Languages</h3>
+                                                    <h1 className="text-center py-3">{ languages.err }</h1>
+                                                </div>
+                                            </>
+                                        ) : languages.result && (
+                                            <>
+                                                <hr />
+                                                <div>
+                                                    <h3 className="font-weight-bolder">Languages</h3>
+                                                    { lang_render }
+                                                </div>
+                                            </>
                                         )
                                     }
                                 </div>

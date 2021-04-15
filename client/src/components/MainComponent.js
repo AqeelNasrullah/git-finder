@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Switch } from 'react-router'
 import { Link } from 'react-router-dom'
 import Home from './HomeComponent'
+import Login from './LoginComponent'
 import Repo from './RepoComponent'
 import Search from './SearchComponent'
 import User from './UserComponent'
@@ -13,6 +14,7 @@ const Main = () => {
             <Route path="/search/:search" component={ Search } />
             <Route exact path="/user/:userParam" component={ User } />
             <Route path="/user/:userParam/repo/:repoParam" component={ Repo } />
+            <Route path="/login" component={ Login } />
 
             {/* 404 */}
             <Route component={ () => {

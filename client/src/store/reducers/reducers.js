@@ -5,6 +5,7 @@ import reposReducer from "./reposReducer";
 import singleRepoReducer from "./singleRepoReducer";
 import commitsReducer from "./commitsReducer";
 import contributorsReducer from "./contributorsReducer";
+import languagesReducer from "./langaugesReducer";
 
 const reducers = combineReducers({
     search: searchReducer,
@@ -12,7 +13,8 @@ const reducers = combineReducers({
     repos: reposReducer,
     repo: singleRepoReducer,
     commits: commitsReducer,
-    contributors: contributorsReducer
+    contributors: contributorsReducer,
+    languages: languagesReducer
 });
 
 export default reducers;
